@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="icons">
+        <file alias="run">img/run.png</file>
+        <file alias="folder">img/folder.png</file>
+    </qresource>
+</RCC>
