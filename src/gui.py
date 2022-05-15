@@ -113,6 +113,11 @@ class Editor(QMainWindow): # класс, генерирующий основно
             with open(self.SettingsFileName, "w") as settings_file:
                 # update 'other' extensions value to settings dict
                 self.EditExt_other()
+                # Copydetect -c run requires that reference_directories list should not be empty.
+                # If it is so - get reference_directories list equal to test_directories list
+                if not len(self.current_settings["reference_directories"]):
+                    self.current_settings["reference_directories"] = copy.deepcopy(self.current_settings["test_directories"])
+                    self.UpdateUI()
                 # back-workaround for 'display_threshold' value
                 settings = copy.deepcopy(self.current_settings)
                 settings["display_threshold"] = float(settings["display_threshold"]/100)
@@ -132,6 +137,11 @@ class Editor(QMainWindow): # класс, генерирующий основно
         with open(self.SettingsFileName, "w") as settings_file:
             # update 'other' extensions value to settings dict
             self.EditExt_other()
+            # Copydetect -c run requires that reference_directories list should not be empty.
+            # If it is so - get reference_directories list equal to test_directories list
+            if not len(self.current_settings["reference_directories"]):
+                self.current_settings["reference_directories"] = copy.deepcopy(self.current_settings["test_directories"])
+                self.UpdateUI()
             # back-workaround for 'display_threshold' value
             settings = copy.deepcopy(self.current_settings)
             settings["display_threshold"] = float(settings["display_threshold"]/100)
