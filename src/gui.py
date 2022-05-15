@@ -102,35 +102,37 @@ class Editor(QMainWindow): # класс, генерирующий основно
 
     def SaveConfigFile(self):
         if not self.CheckForSettingsChange():
-            return
+            return False
         if self.SettingsFileName == "" or not os.path.isfile(self.SettingsFileName):
-            self.SaveConfigFileAs()
+            return self.SaveConfigFileAs()
         else:
             with open(self.SettingsFileName, "w") as settings_file:
                 # back-workaround for 'display_threshold' value
                 settings = copy.deepcopy(self.current_settings)
                 settings["display_threshold"] = float(settings["display_threshold"]/100)
-                json.dump(settings, settings_file, indent=4, separators=(",", ": "))
+                json.dump(settings, settings_file, indent=2, separators=(",", ": "))
             self.saved_settings = copy.deepcopy(self.current_settings)
             self.CheckForSettingsChange()
+        return True
 
     def SaveConfigFileAs(self):
         if not self.CheckForSettingsChange():
-            return
+            return False
         initdir = os.path.expanduser("~") + "/config.json" \
             if self.SettingsFileName == "" or not os.path.isfile(self.SettingsFileName) \
             else self.SettingsFileName
         file, _ = QFileDialog.getSaveFileName(self, "Save new configuration", initdir, "CopyDetect settings (*.json)")
         if file == "":
-            return
+            return False
         self.SettingsFileName = file
         with open(self.SettingsFileName, "w") as settings_file:
             # back-workaround for 'display_threshold' value
             settings = copy.deepcopy(self.current_settings)
             settings["display_threshold"] = float(settings["display_threshold"]/100)
-            json.dump(settings, settings_file, indent=4, separators=(",", ": "))
+            json.dump(settings, settings_file, indent=2, separators=(",", ": "))
         self.saved_settings = copy.deepcopy(self.current_settings)
         self.CheckForSettingsChange()
+        return True
 
     def SelectOutFile(self):
         dir = QFileDialog.getExistingDirectory(self, "Directory select", os.path.expanduser("~"))
