@@ -4,7 +4,7 @@
 # Copyright (c) 2022 Gerasimov Alexander <samik.mechanic@gmail.com>
 #
 
-import sys, os, json, platform, webbrowser, copy, re
+import sys, os, json, platform, webbrowser, copy, re, subprocess
 
 import resource
 from mainform import Ui_MainWindow
@@ -94,12 +94,12 @@ class Editor(QMainWindow): # класс, генерирующий основно
             self.setWindowTitle("CopyDetect UI - " + self.SettingsFileName)
 
     def OpenConfigFile(self):
-        initdir = os.path.expanduser("~") \
-            if self.SettingsFileName == "" or not os.path.isfile(self.SettingsFileName) \
-            else self.SettingsFileName
-        file, _ = QFileDialog.getOpenFileName(self, "Open configuration", initdir, "CopyDetect settings (*.json)")
+        if self.SettingsFileName != "" or os.path.isfile(self.SettingsFileName):
+            self.last_selected_dir = self.SettingsFileName
+        file, _ = QFileDialog.getOpenFileName(self, "Open configuration", self.last_selected_dir, "CopyDetect settings (*.json)")
         if file == "" or not os.path.isfile(file):
             return
+        self.last_selected_dir = file
         self.SettingsFileName = file
         self.LoadConfigFile()
         self.UpdateUI()
@@ -124,12 +124,10 @@ class Editor(QMainWindow): # класс, генерирующий основно
     def SaveConfigFileAs(self):
         if not self.CheckForSettingsChange():
             return False
-        initdir = os.path.expanduser("~") + "/config.json" \
-            if self.SettingsFileName == "" or not os.path.isfile(self.SettingsFileName) \
-            else self.SettingsFileName
-        file, _ = QFileDialog.getSaveFileName(self, "Save new configuration", initdir, "CopyDetect settings (*.json)")
+        file, _ = QFileDialog.getSaveFileName(self, "Save new configuration", self.last_selected_dir, "CopyDetect settings (*.json)")
         if file == "":
             return False
+        self.last_selected_dir = file
         self.SettingsFileName = file
         with open(self.SettingsFileName, "w") as settings_file:
             # update 'other' extensions value to settings dict
@@ -143,7 +141,10 @@ class Editor(QMainWindow): # класс, генерирующий основно
         return True
 
     def SelectOutFile(self):
-        dir = QFileDialog.getExistingDirectory(self, "Directory select", os.path.expanduser("~"))
+        dir = QFileDialog.getExistingDirectory(self, "Directory select", self.last_selected_dir)
+        if dir == "":
+            return
+        self.last_selected_dir = dir
         self.current_settings["out_file"] = dir + '/report.html'
         self.ui.output_location_edit.setText(self.current_settings["out_file"])
         self.CheckForSettingsChange()
@@ -241,10 +242,10 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.AddDir("boilerplate_directories")
     # main one
     def AddDir(self, type):
-        initdir = os.path.expanduser("~") \
-            if self.SettingsFileName == "" or not os.path.isfile(self.SettingsFileName) \
-            else self.SettingsFileName
-        dir = QFileDialog.getExistingDirectory(self, "Directory select", initdir)
+        dir = QFileDialog.getExistingDirectory(self, "Directory select", self.last_selected_dir)
+        if dir == "":
+            return
+        self.last_selected_dir = dir
         if dir not in self.current_settings[type]:
             self.current_settings[type].append(dir)
         self.UpdateUI()
