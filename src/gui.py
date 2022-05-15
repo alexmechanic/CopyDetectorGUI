@@ -38,7 +38,9 @@ class Editor(QMainWindow): # класс, генерирующий основно
             "out_file" : os.getcwd() + '/report.html',
         }
         self.current_settings = copy.deepcopy(self.saved_settings)
-        self.SettingsFileName = os.getcwd() + "/" + "sample.cfg"
+        # debug value
+        # self.SettingsFileName = os.getcwd() + "/" + "sample.cfg"
+        self.SettingsFileName = ""
         self.LoadConfigFile()
         self.ui.run_button.setIcon(QIcon(":/icons/run"))
         self.UpdateUI()
@@ -86,7 +88,13 @@ class Editor(QMainWindow): # класс, генерирующий основно
             self.setWindowTitle("CopyDetect UI - " + self.SettingsFileName)
 
     def OpenConfigFile(self):
-        self.SettingsFileName, _ = QFileDialog.getOpenFileName(self, self.SettingsFileName, "Выбор сохраненной конфигурации", os.path.expanduser("~"), "Настройки CopyDetect (*.cfg *.json)")
+        initdir = os.path.expanduser("~") \
+            if self.SettingsFileName == "" or not os.path.isfile(self.SettingsFileName) \
+            else self.SettingsFileName
+        file, _ = QFileDialog.getOpenFileName(self, "Open configuration", initdir, "CopyDetect settings (*.json)")
+        if file == "" or not os.path.isfile(file):
+            return
+        self.SettingsFileName = file
         self.LoadConfigFile()
         self.UpdateUI()
 
@@ -178,7 +186,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
                 self.setWindowTitle(self.windowTitle() + '*')
             return True
         else:
-            if self.windowTitle()[-1] == '*':
+            if self.windowTitle()[-1] == '*' and not 'Untitled' in self.windowTitle():
                 self.setWindowTitle(self.windowTitle()[:-1])
             return False
 
@@ -191,7 +199,10 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.AddDir("boilerplate_directories")
     # main one
     def AddDir(self, type):
-        dir = QFileDialog.getExistingDirectory(self, "Выбор каталога", os.path.expanduser("~"))
+        initdir = os.path.expanduser("~") \
+            if self.SettingsFileName == "" or not os.path.isfile(self.SettingsFileName) \
+            else self.SettingsFileName
+        dir = QFileDialog.getExistingDirectory(self, "Directory select", initdir)
         if dir not in self.current_settings[type]:
             self.current_settings[type].append(dir)
         self.UpdateUI()
