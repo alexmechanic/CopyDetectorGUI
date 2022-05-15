@@ -46,6 +46,8 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.UpdateUI()
         # connect actions & buttons
         self.ui.actionOpen_configuration.triggered.connect(self.OpenConfigFile)
+        self.ui.actionSave_configuration.triggered.connect(self.SaveConfigFile)
+        self.ui.actionSave_configuration_as.triggered.connect(self.SaveConfigFileAs)
         # add/remove from list buttons
         self.ui.test_dirs_button_add.clicked.connect(self.AddDir_test)
         self.ui.ref_dirs_button_add.clicked.connect(self.AddDir_ref)
@@ -98,8 +100,40 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.LoadConfigFile()
         self.UpdateUI()
 
+    def SaveConfigFile(self):
+        if not self.CheckForSettingsChange():
+            return
+        if self.SettingsFileName == "" or not os.path.isfile(self.SettingsFileName):
+            self.SaveConfigFileAs()
+        else:
+            with open(self.SettingsFileName, "w") as settings_file:
+                # back-workaround for 'display_threshold' value
+                settings = copy.deepcopy(self.current_settings)
+                settings["display_threshold"] = float(settings["display_threshold"]/100)
+                json.dump(settings, settings_file, indent=4, separators=(",", ": "))
+            self.saved_settings = copy.deepcopy(self.current_settings)
+            self.CheckForSettingsChange()
+
+    def SaveConfigFileAs(self):
+        if not self.CheckForSettingsChange():
+            return
+        initdir = os.path.expanduser("~") + "/config.json" \
+            if self.SettingsFileName == "" or not os.path.isfile(self.SettingsFileName) \
+            else self.SettingsFileName
+        file, _ = QFileDialog.getSaveFileName(self, "Save new configuration", initdir, "CopyDetect settings (*.json)")
+        if file == "":
+            return
+        self.SettingsFileName = file
+        with open(self.SettingsFileName, "w") as settings_file:
+            # back-workaround for 'display_threshold' value
+            settings = copy.deepcopy(self.current_settings)
+            settings["display_threshold"] = float(settings["display_threshold"]/100)
+            json.dump(settings, settings_file, indent=4, separators=(",", ": "))
+        self.saved_settings = copy.deepcopy(self.current_settings)
+        self.CheckForSettingsChange()
+
     def SelectOutFile(self):
-        dir = QFileDialog.getExistingDirectory(self, "Выбор каталога", os.path.expanduser("~"))
+        dir = QFileDialog.getExistingDirectory(self, "Directory select", os.path.expanduser("~"))
         self.current_settings["out_file"] = dir + '/report.html'
         self.ui.output_location_edit.setText(self.current_settings["out_file"])
         self.CheckForSettingsChange()
