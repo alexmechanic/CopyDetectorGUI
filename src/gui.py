@@ -121,7 +121,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
                 # back-workaround for 'display_threshold' value
                 settings = copy.deepcopy(self.current_settings)
                 settings["display_threshold"] = float(settings["display_threshold"]/100)
-                json.dump(settings, settings_file, indent=2, separators=(",", ": "))
+                json.dump(settings, settings_file, indent=2, ensure_ascii=False, separators=(",", ": "))
             self.saved_settings = copy.deepcopy(self.current_settings)
             self.CheckForSettingsChange()
         return True
@@ -145,8 +145,9 @@ class Editor(QMainWindow): # класс, генерирующий основно
             # back-workaround for 'display_threshold' value
             settings = copy.deepcopy(self.current_settings)
             settings["display_threshold"] = float(settings["display_threshold"]/100)
-            json.dump(settings, settings_file, indent=2, separators=(",", ": "))
+            json.dump(settings, settings_file, indent=2, ensure_ascii=False, separators=(",", ": "))
         self.saved_settings = copy.deepcopy(self.current_settings)
+        self.setWindowTitle("CopyDetect UI - " + self.SettingsFileName)
         self.CheckForSettingsChange()
         return True
 
