@@ -6,10 +6,8 @@
 
 import sys, os, json, platform, webbrowser, copy, re
 
-from construct import Switch
-from mainform import Ui_MainWindow
 import resource
-# from parse_report import RunAnalysis_GUI
+from mainform import Ui_MainWindow
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
