@@ -72,7 +72,6 @@ class Editor(QMainWindow): # класс, генерирующий основно
         # out file full path edit change
         self.ui.output_location_edit.textChanged.connect(self.ChangeOutFilePath)
 
-
     def LoadConfigFile(self):
         if os.path.isfile(self.SettingsFileName):
             with open(self.SettingsFileName, "r") as settings_file:
@@ -84,7 +83,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
                         self.current_settings[key] = int(settings[key]*100)
                 # refresh change state
                 self.saved_settings = copy.deepcopy(self.current_settings)
-            self.setWindowTitle("CopyDetect UI - " + self.SettingsFileName.split('/')[-1])
+            self.setWindowTitle("CopyDetect UI - " + self.SettingsFileName)
 
     def OpenConfigFile(self):
         self.SettingsFileName, _ = QFileDialog.getOpenFileName(self, self.SettingsFileName, "Выбор сохраненной конфигурации", os.path.expanduser("~"), "Настройки CopyDetect (*.cfg *.json)")
@@ -172,7 +171,6 @@ class Editor(QMainWindow): # класс, генерирующий основно
             if self.windowTitle()[-1] == '*':
                 self.setWindowTitle(self.windowTitle()[:-1])
             return False
-
 
     # add button connection redirection funcs
     def AddDir_test(self):
