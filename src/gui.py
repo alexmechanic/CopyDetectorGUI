@@ -118,27 +118,37 @@ class Editor(QMainWindow): # класс, генерирующий основно
             model.appendRow(item)
         self.ui.bp_dirs_list.setModel(model)
         # manage extensions list into checkboxes and 'other' list
-        if 'c' in self.current_settings["extensions"] or 'cpp' in self.current_settings["extensions"]:
-            if 'c' in self.current_settings["extensions"]:
-                self.current_settings["extensions"].insert(self.current_settings["extensions"].index('c'), 'cpp')
-                self.current_settings["extensions"].insert(self.current_settings["extensions"].index('c'), 'cc')
-            elif 'cpp' in self.current_settings["extensions"]:
-                self.current_settings["extensions"].insert(self.current_settings["extensions"].index('cpp'), 'c')
-                self.current_settings["extensions"].insert(self.current_settings["extensions"].index('cpp'), 'cc')
+        if "cpp" in self.current_settings["extensions"] or \
+           "cc" in self.current_settings["extensions"] or \
+           "c" in self.current_settings["extensions"]:
+            if "c" in self.current_settings["extensions"]:
+                if not "cpp" in self.current_settings["extensions"]:
+                    self.current_settings["extensions"].insert(self.current_settings["extensions"].index("c"), "cpp")
+                if not "cc" in self.current_settings["extensions"]:
+                  self.current_settings["extensions"].insert(self.current_settings["extensions"].index("c"), "cc")
+            elif "cpp" in self.current_settings["extensions"]:
+                if not "c" in self.current_settings["extensions"]:
+                  self.current_settings["extensions"].insert(self.current_settings["extensions"].index("cpp"), "c")
+                if not "cc" in self.current_settings["extensions"]:
+                  self.current_settings["extensions"].insert(self.current_settings["extensions"].index("cpp"), "cc")
             else:
-                self.current_settings["extensions"].insert(self.current_settings["extensions"].index('cc'), 'c')
-                self.current_settings["extensions"].insert(self.current_settings["extensions"].index('cc'), 'cpp')
-        self.ui.extensions_c_source_checkbox.setChecked('c' in self.current_settings["extensions"] or 'cpp' in self.current_settings["extensions"])
-        if 'h' in self.current_settings["extensions"] or 'hpp' in self.current_settings["extensions"]:
-            if 'h' in self.current_settings["extensions"]:
-                self.current_settings["extensions"].insert(self.current_settings["extensions"].index('h'), 'hpp')
+                if not "c" in self.current_settings["extensions"]:
+                  self.current_settings["extensions"].insert(self.current_settings["extensions"].index("cc"), "c")
+                if not "cpp" in self.current_settings["extensions"]:
+                  self.current_settings["extensions"].insert(self.current_settings["extensions"].index("cc"), "cpp")
+        self.ui.extensions_c_source_checkbox.setChecked("c" in self.current_settings["extensions"] or "cpp" in self.current_settings["extensions"])
+        if "h" in self.current_settings["extensions"] or "hpp" in self.current_settings["extensions"]:
+            if "h" in self.current_settings["extensions"]:
+                if not "hpp" in self.current_settings["extensions"]:
+                  self.current_settings["extensions"].insert(self.current_settings["extensions"].index("h"), "hpp")
             else:
-                self.current_settings["extensions"].insert(self.current_settings["extensions"].index('hpp'), 'h')
-        self.ui.extensions_c_header_checkbox.setChecked('h' in self.current_settings["extensions"] or 'hpp' in self.current_settings["extensions"])
-        self.ui.extensions_python_checkbox.setChecked('py' in self.current_settings["extensions"])
+                if not "h" in self.current_settings["extensions"]:
+                  self.current_settings["extensions"].insert(self.current_settings["extensions"].index("hpp"), "h")
+        self.ui.extensions_c_header_checkbox.setChecked("h" in self.current_settings["extensions"] or "hpp" in self.current_settings["extensions"])
+        self.ui.extensions_python_checkbox.setChecked("py" in self.current_settings["extensions"])
         other_types = []
         for ext in self.current_settings["extensions"]:
-            if ext not in ['c', 'cpp', 'h', 'hpp', 'py']:
+            if ext not in ["c", "cpp", "cc", "h", "hpp", "py"]:
                 other_types.append(ext)
         if len(other_types):
             self.ui.extensions_other_checkbox.setChecked(True)
@@ -206,11 +216,11 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.UpdateUI()
 
     def EditExt_c(self):
-        self.EditExt(['cpp'], self.ui.extensions_c_source_checkbox.isChecked())
+        self.EditExt(["cpp", "cc", "c"], self.ui.extensions_c_source_checkbox.isChecked())
     def EditExt_h(self):
-        self.EditExt(['hpp'], self.ui.extensions_c_header_checkbox.isChecked())
+        self.EditExt(["hpp", "h"], self.ui.extensions_c_header_checkbox.isChecked())
     def EditExt_py(self):
-        self.EditExt(['py'], self.ui.extensions_python_checkbox.isChecked())
+        self.EditExt(["py"], self.ui.extensions_python_checkbox.isChecked())
     def EditExt_other_enable(self):
         enable = self.ui.extensions_other_checkbox.isChecked()
         self.ui.extensions_other_edit.setEnabled(enable)
