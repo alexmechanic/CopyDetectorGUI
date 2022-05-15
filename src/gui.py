@@ -44,10 +44,12 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.LoadConfigFile()
         self.ui.run_button.setIcon(QIcon(":/icons/run"))
         self.UpdateUI()
-        # connect actions & buttons
+        # connect menubar actions
         self.ui.actionOpen_configuration.triggered.connect(self.OpenConfigFile)
         self.ui.actionSave_configuration.triggered.connect(self.SaveConfigFile)
         self.ui.actionSave_configuration_as.triggered.connect(self.SaveConfigFileAs)
+        self.ui.actionHelp_Help.triggered.connect(self.OpenHelp)
+        self.ui.actionHelp_About.triggered.connect(self.About)
         # add/remove from list buttons
         self.ui.test_dirs_button_add.clicked.connect(self.AddDir_test)
         self.ui.ref_dirs_button_add.clicked.connect(self.AddDir_ref)
@@ -331,10 +333,16 @@ class Editor(QMainWindow): # класс, генерирующий основно
 
     def closeEvent(self, event):
         # save settings
-        # TODO add check for changes and prompt
-        # with open(os.getcwd() + "/" + self.SettingsFileName, "w") as settings_file:
-        #     json.dump(settings, settings_file)
-        #     settings_file.close()
+        if self.CheckForSettingsChange():
+            ret = QMessageBox.question(self, "Save changes", "Save configuration changes before exit?", \
+                    QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, defaultButton=QMessageBox.Yes)
+            if ret == QMessageBox.Cancel:
+                event.ignore()
+                return
+            if ret == QMessageBox.Yes:
+                if not self.SaveConfigFile():
+                    event.ignore()
+                    return
         event.accept()
 
     def OpenHelp(self):
@@ -345,8 +353,8 @@ class Editor(QMainWindow): # класс, генерирующий основно
             webbrowser.open_new_tab(os.getcwd() + "/README.md")
 
     def About(self):
-        QMessageBox.information(self, u"О программе", \
-            u"DESCRIPTION\n\nАвтор:\nГерасимов Александр\n<samik.mechanic@gmail.com>")
+        QMessageBox.information(self, "CopyDetect UI app", \
+            "Graphical interface for CopyDetect CLI\nTool author: blingenf\n<https://github.com/blingenf>\n\nGUI author:\nAlexander Gerasimov @ MIPT \n<samik.mechanic@gmail.com>")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
