@@ -35,7 +35,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
             "disable_filtering" : False,
             "disable_autoopen" : False,
             "truncate" : False,
-            "out_file" : os.getcwd(),
+            "out_file" : os.getcwd() + '/report.html',
         }
         self.current_settings = copy.deepcopy(self.saved_settings)
         self.SettingsFileName = os.getcwd() + "/" + "sample.cfg"
@@ -43,7 +43,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.ui.run_button.setIcon(QIcon(":/icons/run"))
         self.UpdateUI()
         # connect actions & buttons
-        self.ui.actionOpen_configuration.triggered.connect(self.ChooseConfigFile)
+        self.ui.actionOpen_configuration.triggered.connect(self.OpenConfigFile)
         # add/remove from list buttons
         self.ui.test_dirs_button_add.clicked.connect(self.AddDir_test)
         self.ui.ref_dirs_button_add.clicked.connect(self.AddDir_ref)
@@ -67,6 +67,11 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.ui.additional_filtering_checkbox.stateChanged.connect(self.EditAdd_filt)
         self.ui.additional_autoopen_checkbox.stateChanged.connect(self.EditAdd_autoopen)
         self.ui.additional_truncate_checkbox.stateChanged.connect(self.EditAdd_truncate)
+        # out file selection button
+        self.ui.output_location_select_button.clicked.connect(self.SelectOutFile)
+        # out file full path edit change
+        self.ui.output_location_edit.textChanged.connect(self.ChangeOutFilePath)
+
 
     def LoadConfigFile(self):
         if os.path.isfile(self.SettingsFileName):
@@ -81,10 +86,21 @@ class Editor(QMainWindow): # класс, генерирующий основно
                 self.saved_settings = copy.deepcopy(self.current_settings)
             self.setWindowTitle("CopyDetect UI - " + self.SettingsFileName.split('/')[-1])
 
-    def ChooseConfigFile(self):
+    def OpenConfigFile(self):
         self.SettingsFileName, _ = QFileDialog.getOpenFileName(self, self.SettingsFileName, "Выбор сохраненной конфигурации", os.path.expanduser("~"), "Настройки CopyDetect (*.cfg *.json)")
         self.LoadConfigFile()
         self.UpdateUI()
+
+    def SelectOutFile(self):
+        dir = QFileDialog.getExistingDirectory(self, "Выбор каталога", os.path.expanduser("~"))
+        self.current_settings["out_file"] = dir + '/report.html'
+        self.ui.output_location_edit.setText(self.current_settings["out_file"])
+        self.CheckForSettingsChange()
+    
+    def ChangeOutFilePath(self):
+        path = self.ui.output_location_edit.text()
+        self.current_settings["out_file"] = path
+        self.CheckForSettingsChange()
 
     def UpdateUI(self):
         model = QStandardItemModel(self.ui.test_dirs_list)
@@ -137,20 +153,26 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.ui.additional_filtering_checkbox.setChecked(self.current_settings["disable_filtering"])
         self.ui.additional_autoopen_checkbox.setChecked(self.current_settings["disable_autoopen"])
         self.ui.additional_truncate_checkbox.setChecked(self.current_settings["truncate"])
-        self.ui.output_location_edit.setText(self.current_settings["out_file"] + "/report.html")
+        self.ui.output_location_edit.setText(self.current_settings["out_file"])
         self.ui.run_button.setEnabled(len(self.current_settings["test_directories"]) and \
                                       len(self.current_settings["reference_directories"]) and \
-                                      len(self.current_settings["boilerplate_directories"]) and \
-                                      os.path.isdir(self.current_settings["out_file"]))
+                                      len(self.current_settings["boilerplate_directories"]))
+
+        self.CheckForSettingsChange()
+
+    def CheckForSettingsChange(self):
         # set unsaved state for window title
         print(self.saved_settings)
         print(self.current_settings)
         if self.current_settings != self.saved_settings:
             if self.windowTitle()[-1] != '*':
                 self.setWindowTitle(self.windowTitle() + '*')
+            return True
         else:
             if self.windowTitle()[-1] == '*':
                 self.setWindowTitle(self.windowTitle()[:-1])
+            return False
+
 
     # add button connection redirection funcs
     def AddDir_test(self):
