@@ -57,6 +57,16 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.ui.extensions_python_checkbox.stateChanged.connect(self.EditExt_py)
         self.ui.extensions_other_checkbox.stateChanged.connect(self.EditExt_other_enable)
         # self.ui.extensions_other_edit.textChanged.connect(self.EditExt_other)
+        # thresholds spinboxes
+        self.ui.thresholds_noise_spinbox.valueChanged.connect(self.EditThres_noise)
+        self.ui.thresholds_guarantee_spinbox.valueChanged.connect(self.EditThres_guar)
+        self.ui.thresholds_display_spinbox.valueChanged.connect(self.EditThres_disp)
+        # additional checkboxes
+        self.ui.additional_samename_checkbox.stateChanged.connect(self.EditAdd_samename)
+        self.ui.additional_sameleaf_checkbox.stateChanged.connect(self.EditAdd_leaf)
+        self.ui.additional_filtering_checkbox.stateChanged.connect(self.EditAdd_filt)
+        self.ui.additional_autoopen_checkbox.stateChanged.connect(self.EditAdd_autoopen)
+        self.ui.additional_truncate_checkbox.stateChanged.connect(self.EditAdd_truncate)
 
     def LoadConfigFile(self):
         if os.path.isfile(self.SettingsFileName):
@@ -210,6 +220,37 @@ class Editor(QMainWindow): # класс, генерирующий основно
                     self.current_settings["extensions"].remove(ext)
         self.UpdateUI()
     
+    def EditThres_noise(self):
+        self.EditThres("noise_threshold")
+    def EditThres_guar(self):
+        self.EditThres("guarantee_threshold")
+    def EditThres_disp(self):
+        self.EditThres("display_threshold")
+    def EditThres(self, type):
+        if type == "noise_threshold":
+            val = self.ui.thresholds_noise_spinbox.value()
+        elif type == "guarantee_threshold":
+            val = self.ui.thresholds_guarantee_spinbox.value()
+        else:
+            val = self.ui.thresholds_display_spinbox.value()
+        self.current_settings[type] = val
+        self.UpdateUI()
+
+    def EditAdd_samename(self):
+        self.current_settings["same_name_only"] = self.ui.additional_samename_checkbox.isChecked()
+        self.UpdateUI()
+    def EditAdd_leaf(self):
+        self.current_settings["ignore_leaf"] = self.ui.additional_sameleaf_checkbox.isChecked()
+        self.UpdateUI()
+    def EditAdd_filt(self):
+        self.current_settings["disable_filtering"] = self.ui.additional_filtering_checkbox.isChecked()
+        self.UpdateUI()
+    def EditAdd_autoopen(self):
+        self.current_settings["disable_autoopen"] = self.ui.additional_autoopen_checkbox.isChecked()
+        self.UpdateUI()
+    def EditAdd_truncate(self):
+        self.current_settings["truncate"] = self.ui.additional_truncate_checkbox.isChecked()
+        self.UpdateUI()
 
     def closeEvent(self, event):
         # save settings
