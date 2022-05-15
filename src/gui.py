@@ -109,6 +109,8 @@ class Editor(QMainWindow): # класс, генерирующий основно
             return self.SaveConfigFileAs()
         else:
             with open(self.SettingsFileName, "w") as settings_file:
+                # update 'other' extensions value to settings dict
+                self.EditExt_other()
                 # back-workaround for 'display_threshold' value
                 settings = copy.deepcopy(self.current_settings)
                 settings["display_threshold"] = float(settings["display_threshold"]/100)
@@ -128,6 +130,8 @@ class Editor(QMainWindow): # класс, генерирующий основно
             return False
         self.SettingsFileName = file
         with open(self.SettingsFileName, "w") as settings_file:
+            # update 'other' extensions value to settings dict
+            self.EditExt_other()
             # back-workaround for 'display_threshold' value
             settings = copy.deepcopy(self.current_settings)
             settings["display_threshold"] = float(settings["display_threshold"]/100)
@@ -285,17 +289,14 @@ class Editor(QMainWindow): # класс, генерирующий основно
     def EditExt_other(self):
         enable = self.ui.extensions_other_checkbox.isChecked()
         exts = re.sub('[ *.]', '', self.ui.extensions_other_edit.text()).split(',')
-        print(exts)
         self.EditExt(exts, enable)
     def EditExt(self, exts, enable=True):
         for ext in exts:
             if enable:
                 if ext not in self.current_settings["extensions"]:
-                    print("add", ext)
                     self.current_settings["extensions"].append(ext)
             else:
                 if ext in self.current_settings["extensions"]:
-                    print("remove", ext)
                     self.current_settings["extensions"].remove(ext)
         self.UpdateUI()
     
