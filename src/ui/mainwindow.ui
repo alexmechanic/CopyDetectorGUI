@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string notr="true">CopyDetect UI - New Configuration*</string>
+   <string notr="true">CopyDetect UI - Untitled*</string>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
@@ -597,7 +597,7 @@
    </property>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Справка</string>
+     <string>Help</string>
     </property>
     <addaction name="actionHelp_Help"/>
     <addaction name="separator"/>
@@ -608,13 +608,15 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen_configuration"/>
+    <addaction name="actionSave_configuration"/>
+    <addaction name="actionSave_configuration_as"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionHelp_About">
    <property name="text">
-    <string>О программе</string>
+    <string>About CopyDetect UI</string>
    </property>
   </action>
   <action name="actionHelp_Help">
@@ -627,7 +629,26 @@
   </action>
   <action name="actionOpen_configuration">
    <property name="text">
-    <string>Open configuration...</string>
+    <string>Open Configuration...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave_configuration">
+   <property name="text">
+    <string>Save Configuration</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSave_configuration_as">
+   <property name="text">
+    <string>Save Configuration As...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
  </widget>
