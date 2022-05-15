@@ -77,6 +77,8 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.ui.output_location_select_button.clicked.connect(self.SelectOutFile)
         # out file full path edit change
         self.ui.output_location_edit.textChanged.connect(self.ChangeOutFilePath)
+        # run button
+        self.ui.run_button.clicked.connect(self.Run)
 
     def LoadConfigFile(self):
         if os.path.isfile(self.SettingsFileName):
@@ -213,9 +215,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.ui.additional_autoopen_checkbox.setChecked(self.current_settings["disable_autoopen"])
         self.ui.additional_truncate_checkbox.setChecked(self.current_settings["truncate"])
         self.ui.output_location_edit.setText(self.current_settings["out_file"])
-        self.ui.run_button.setEnabled(len(self.current_settings["test_directories"]) and \
-                                      len(self.current_settings["reference_directories"]) and \
-                                      len(self.current_settings["boilerplate_directories"]))
+        self.ui.run_button.setEnabled(len(self.current_settings["test_directories"]))
 
         self.CheckForSettingsChange()
 
@@ -331,6 +331,39 @@ class Editor(QMainWindow): # класс, генерирующий основно
     def EditAdd_truncate(self):
         self.current_settings["truncate"] = self.ui.additional_truncate_checkbox.isChecked()
         self.UpdateUI()
+
+    def Run(self):
+        if self.CheckForSettingsChange():
+            ret = QMessageBox.warning(self, "Save before run",
+                                            "You should save changes before running analysis.\nProceed?",
+                                            QMessageBox.Save | QMessageBox.Cancel,
+                                            defaultButton=QMessageBox.Save)
+            if ret == QMessageBox.Cancel or not self.SaveConfigFile():
+                QMessageBox.critical(self, "Cannot run analysis",
+                                           "Configuration saving was cancelled.\nCannot proceed.",
+                                           QMessageBox.Ok)
+                return
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        QApplication.processEvents()
+        self.setEnabled(False)
+        try:
+            out = subprocess.check_output(["copydetect", "-c", self.SettingsFileName], stderr=subprocess.STDOUT, shell=False)
+            mbox = QMessageBox(self)
+            mbox.setIcon(QMessageBox.Information)
+            mbox.setWindowTitle("Done!")
+            mbox.setText("Analysis finished.")
+            mbox.setInformativeText("Details are shown below:")
+            mbox.setDetailedText(out.decode('utf-8'))
+            mbox.setStandardButtons(QMessageBox.Ok)
+            mbox.exec()
+            path = os.path.normpath(os.path.dirname(self.current_settings["out_file"]))
+            if platform.system() in ['Darwin', 'Linux']:
+                subprocess.check_call(['open', '--', path])
+            else:
+                subprocess.check_call(['explorer', path])
+        finally:
+            QApplication.restoreOverrideCursor()
+            self.setEnabled(True)
 
     def closeEvent(self, event):
         # save settings
