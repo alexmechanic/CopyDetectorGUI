@@ -4,7 +4,7 @@
 # Copyright (c) 2022 Gerasimov Alexander <samik.mechanic@gmail.com>
 #
 
-import sys, os, json, platform, webbrowser, copy, re, subprocess
+import sys, os, json, platform, webbrowser, copy, re, subprocess, pathlib
 
 import resource
 from io import StringIO
@@ -66,9 +66,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
             "out_file" : os.getcwd() + '/report.html',
         }
         self.current_settings = copy.deepcopy(self.saved_settings)
-        # debug value
-        # self.SettingsFileName = os.getcwd() + "/" + "sample.cfg"
-        self.SettingsFileName = ""
+        self.LoadAppSettings()
         self.LoadConfigFile()
         self.ui.run_button.setIcon(QIcon(":/icons/run"))
         self.UpdateUI()
@@ -120,14 +118,36 @@ class Editor(QMainWindow): # класс, генерирующий основно
             self.current_settings["reference_directories"] = copy.deepcopy(self.current_settings["test_directories"])
             self.UpdateUI()
 
+    def _get_app_path(self):
+        appdir = str(pathlib.Path.home())
+        if sys.platform == "win32":
+            appdir += "/AppData/Roaming"
+        elif sys.platform == "linux":
+            appdir += "/.local/share"
+        elif sys.platform == "darwin":
+            appdir += "/Library/Application Support"
+        appdir += "/CopyDetectGUI"
+        try: os.makedirs(appdir)
+        except FileExistsError: pass
+        return appdir + "/settings.json"
+
+    def LoadAppSettings(self):
+        settings_path = self._get_app_path()
+        if not os.path.isfile(settings_path):
+            self.SettingsFileName = ""
+            self.last_selected_dir = os.path.expanduser("~")
+        else:
+            app_settings = json.load(open(settings_path, "r"))
+            self.SettingsFileName = app_settings["last_config_file"]
+            self.last_selected_dir = app_settings["last_selected_dir"]
+
     def LoadConfigFile(self):
         if os.path.isfile(self.SettingsFileName):
-            with open(self.SettingsFileName, "r") as settings_file:
-                settings = json.load(settings_file)
-                for key in settings.keys():
-                        self.current_settings[key] = settings[key]
-                # refresh change state
-                self.saved_settings = copy.deepcopy(self.current_settings)
+            settings = json.load(open(self.SettingsFileName, "r"))
+            for key in settings.keys():
+                self.current_settings[key] = settings[key]
+            # refresh change state
+            self.saved_settings = copy.deepcopy(self.current_settings)
             self.setWindowTitle("CopyDetect UI - " + self.SettingsFileName)
 
     def OpenConfigFile(self):
@@ -141,15 +161,24 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.LoadConfigFile()
         self.UpdateUI()
 
+    def SaveAppSettings(self):
+        settings_path = self._get_app_path()
+        app_settings = {
+            "last_config_file": self.SettingsFileName,
+            "last_selected_dir": self.last_selected_dir
+        }
+        json.dump(app_settings, open(settings_path, "w"), \
+                  indent=2, ensure_ascii=False, separators=(",", ": "))
+
     def SaveConfigFile(self):
         if not self.CheckForSettingsChange():
             return False
         if self.SettingsFileName == "" or not os.path.isfile(self.SettingsFileName):
             return self.SaveConfigFileAs()
         else:
-            with open(self.SettingsFileName, "w") as settings_file:
-                self._apply_workarounds()
-                json.dump(self.current_settings, settings_file, indent=2, ensure_ascii=False, separators=(",", ": "))
+            self._apply_workarounds()
+            json.dump(self.current_settings, open(self.SettingsFileName, "w"), \
+                      indent=2, ensure_ascii=False, separators=(",", ": "))
             self.saved_settings = copy.deepcopy(self.current_settings)
             self.CheckForSettingsChange()
         return True
@@ -162,9 +191,9 @@ class Editor(QMainWindow): # класс, генерирующий основно
             return False
         self.last_selected_dir = file
         self.SettingsFileName = file
-        with open(self.SettingsFileName, "w") as settings_file:
-            self._apply_workarounds()
-            json.dump(self.current_settings, settings_file, indent=2, ensure_ascii=False, separators=(",", ": "))
+        self._apply_workarounds()
+        json.dump(self.current_settings, open(self.SettingsFileName, "w"), \
+                  indent=2, ensure_ascii=False, separators=(",", ": "))
         self.saved_settings = copy.deepcopy(self.current_settings)
         self.setWindowTitle("CopyDetect UI - " + self.SettingsFileName)
         self.CheckForSettingsChange()
@@ -373,7 +402,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
         QApplication.processEvents()
         try:
             self._apply_workarounds()
-        self.setEnabled(False)
+            self.setEnabled(False)
             detector = CopyDetector(config=self.current_settings)
             # redirect print from stdout to variable
             stdout, stderr = sys.stdout, sys.stderr
@@ -399,11 +428,11 @@ class Editor(QMainWindow): # класс, генерирующий основно
             if mbox.exec() == QMessageBox.Open:
                 # open report folder
                 try: 
-            path = os.path.normpath(os.path.dirname(self.current_settings["out_file"]))
-            if platform.system() in ['Darwin', 'Linux']:
-                subprocess.check_call(['open', '--', path])
-            else:
-                subprocess.check_call(['explorer', path])
+                    path = os.path.normpath(os.path.dirname(self.current_settings["out_file"]))
+                    if platform.system() in ['Darwin', 'Linux']:
+                        subprocess.check_call(['open', '--', path])
+                    else:
+                        subprocess.check_call(['explorer', path])
                 except:
                     pass
         except Exception as e:
@@ -429,6 +458,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
                 if not self.SaveConfigFile():
                     event.ignore()
                     return
+        self.SaveAppSettings()
         event.accept()
 
     def OpenHelp(self):
