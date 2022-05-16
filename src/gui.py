@@ -125,10 +125,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
             with open(self.SettingsFileName, "r") as settings_file:
                 settings = json.load(settings_file)
                 for key in settings.keys():
-                    if key != "display_threshold":
                         self.current_settings[key] = settings[key]
-                    else:
-                        self.current_settings[key] = int(settings[key]*100)
                 # refresh change state
                 self.saved_settings = copy.deepcopy(self.current_settings)
             self.setWindowTitle("CopyDetect UI - " + self.SettingsFileName)
@@ -245,7 +242,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
             self.ui.extensions_other_edit.setEnabled(True)
         self.ui.thresholds_noise_spinbox.setValue(self.current_settings["noise_threshold"])
         self.ui.thresholds_guarantee_spinbox.setValue(self.current_settings["guarantee_threshold"])
-        self.ui.thresholds_display_spinbox.setValue(self.current_settings["display_threshold"])
+        self.ui.thresholds_display_spinbox.setValue(int(self.current_settings["display_threshold"]*100))
         self.ui.additional_samename_checkbox.setChecked(self.current_settings["same_name_only"])
         self.ui.additional_sameleaf_checkbox.setChecked(self.current_settings["ignore_leaf"])
         self.ui.additional_filtering_checkbox.setChecked(self.current_settings["disable_filtering"])
@@ -351,7 +348,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
         elif type == "guarantee_threshold":
             val = self.ui.thresholds_guarantee_spinbox.value()
         else:
-            val = self.ui.thresholds_display_spinbox.value()
+            val = float(self.ui.thresholds_display_spinbox.value())/100
         self.current_settings[type] = val
         self.UpdateUI()
 
