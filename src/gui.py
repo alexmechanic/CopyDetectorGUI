@@ -12,6 +12,21 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
+def _repr_interactive(text: str):
+    copy_start = 0
+    _str = ""
+    for i in range(1, len(text)):
+        char = text[i]
+        if char == '\r':
+            copy_start = i+1
+        elif char == '\n' or i == len(text) and i-1 != copy_start:
+            _str = _str + text[copy_start:i+1].replace('#', "🁢")
+            i = i+1
+            copy_start = i
+        else:
+            pass
+    return _str
+
 class Editor(QMainWindow): # класс, генерирующий основное окно приложения
     src_dir = None
     src_users = None
@@ -348,36 +363,51 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.UpdateUI()
 
     def Run(self):
-        if self.CheckForSettingsChange():
-            ret = QMessageBox.warning(self, "Save before run",
-                                            "You should save changes before running analysis.\nProceed?",
-                                            QMessageBox.Save | QMessageBox.Cancel,
-                                            defaultButton=QMessageBox.Save)
-            if ret == QMessageBox.Cancel or not self.SaveConfigFile():
-                QMessageBox.critical(self, "Cannot run analysis",
-                                           "Configuration saving was cancelled.\nCannot proceed.",
-                                           QMessageBox.Ok)
-                return
         QApplication.setOverrideCursor(Qt.WaitCursor)
         QApplication.processEvents()
-        self.setEnabled(False)
         try:
-            out = subprocess.check_output(["copydetect", "-c", self.SettingsFileName], stderr=subprocess.STDOUT, shell=False)
+        self.setEnabled(False)
+            # back-workaround for 'display_threshold' value
+            settings = copy.deepcopy(self.current_settings)
+            settings["display_threshold"] = float(settings["display_threshold"]/100)
+            detector = CopyDetector(config=settings)
+            # redirect print from stdout to variable
+            stdout, stderr = sys.stdout, sys.stderr
+            sys.stdout = StringIO()
+            # progress bars prompt to stderr, so combine
+            sys.stderr = sys.stdout
+            detector.run()
+            detector.generate_html_report()
+            output = sys.stdout.getvalue()
+            # restore stdout
+            sys.stdout, sys.stderr = stdout, stderr
+            # process carriage return characters due to interactive nature of CopyDetect output
+            output = _repr_interactive(output)
             mbox = QMessageBox(self)
+            mbox.setStyleSheet("QLabel{min-width: 150px;}");
             mbox.setIcon(QMessageBox.Information)
             mbox.setWindowTitle("Done!")
             mbox.setText("Analysis finished.")
             mbox.setInformativeText("Details are shown below:")
-            mbox.setDetailedText(out.decode('utf-8'))
-            mbox.setStandardButtons(QMessageBox.Ok)
-            mbox.exec()
+            mbox.setDetailedText(output)
+            mbox.setStandardButtons(QMessageBox.Open | QMessageBox.Ok)
+            mbox.setDefaultButton(QMessageBox.Ok)
+            QApplication.restoreOverrideCursor()
+            if mbox.exec() == QMessageBox.Open:
+                # open report folder
             path = os.path.normpath(os.path.dirname(self.current_settings["out_file"]))
             if platform.system() in ['Darwin', 'Linux']:
                 subprocess.check_call(['open', '--', path])
             else:
                 subprocess.check_call(['explorer', path])
+        except Exception as e:
+            errbox = QMessageBox(self)
+            errbox.setIcon(QMessageBox.Critical)
+            errbox.setWindowTitle("Error")
+            errbox.setText("Error occured during analysis:")
+            errbox.setInformativeText(str(e))
+            errbox.exec()
         finally:
-            QApplication.restoreOverrideCursor()
             self.setEnabled(True)
 
     def closeEvent(self, event):
