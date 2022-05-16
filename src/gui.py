@@ -10,9 +10,14 @@ import resource
 from io import StringIO
 from copydetect import CopyDetector
 from mainform import Ui_MainWindow
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import (
+    QApplication, QMainWindow,
+    QFileDialog, QMessageBox
+)
+from PyQt5.QtGui import (
+    QIcon, QStandardItemModel, QStandardItem
+)
 
 def _repr_interactive(text: str):
     copy_start = 0
