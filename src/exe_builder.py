@@ -17,10 +17,14 @@ if __name__ == '__main__':
     sys.stdout.flush()
     PyInstaller.__main__.run([
         '--name=%s' % NAME,
-        '--onefile',
+        # '--onefile',
+        '--windowed',
         '--distpath=../exe',
+        '--collect-data', 'copydetect',
         '--clean',
+        '--noconfirm',
         '--log-level=CRITICAL',
+        '--icon=./ui/icon.ico',
         'gui.py',
     ])
     remove_tree("build")
