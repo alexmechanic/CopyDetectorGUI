@@ -7,6 +7,8 @@
 import sys, os, json, platform, webbrowser, copy, re, subprocess
 
 import resource
+from io import StringIO
+from copydetect import CopyDetector
 from mainform import Ui_MainWindow
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
