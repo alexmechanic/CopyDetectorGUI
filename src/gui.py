@@ -389,7 +389,6 @@ class Editor(QMainWindow): # класс, генерирующий основно
             # process carriage return characters due to interactive nature of CopyDetect output
             output = _repr_interactive(output)
             mbox = QMessageBox(self)
-            mbox.setStyleSheet("QLabel{min-width: 150px;}");
             mbox.setIcon(QMessageBox.Information)
             mbox.setWindowTitle("Done!")
             mbox.setText("Analysis finished.")
@@ -400,12 +399,16 @@ class Editor(QMainWindow): # класс, генерирующий основно
             QApplication.restoreOverrideCursor()
             if mbox.exec() == QMessageBox.Open:
                 # open report folder
+                try: 
             path = os.path.normpath(os.path.dirname(self.current_settings["out_file"]))
             if platform.system() in ['Darwin', 'Linux']:
                 subprocess.check_call(['open', '--', path])
             else:
                 subprocess.check_call(['explorer', path])
+                except:
+                    pass
         except Exception as e:
+            QApplication.restoreOverrideCursor()
             errbox = QMessageBox(self)
             errbox.setIcon(QMessageBox.Critical)
             errbox.setWindowTitle("Error")
