@@ -169,16 +169,19 @@ class Editor(QMainWindow): # класс, генерирующий основно
         model = QStandardItemModel(self.ui.test_dirs_list)
         for dir in self.current_settings["test_directories"]:
             item = QStandardItem(QIcon(":/icons/folder"), dir)
+            item.setEditable(False)
             model.appendRow(item)
         self.ui.test_dirs_list.setModel(model)
         model = QStandardItemModel(self.ui.test_dirs_list)
         for dir in self.current_settings["reference_directories"]:
             item = QStandardItem(QIcon(":/icons/folder"), dir)
+            item.setEditable(False)
             model.appendRow(item)
         self.ui.ref_dirs_list.setModel(model)
         model = QStandardItemModel(self.ui.test_dirs_list)
         for dir in self.current_settings["boilerplate_directories"]:
             item = QStandardItem(QIcon(":/icons/folder"), dir)
+            item.setEditable(False)
             model.appendRow(item)
         self.ui.bp_dirs_list.setModel(model)
         # manage extensions list into checkboxes and 'other' list
