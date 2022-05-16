@@ -237,7 +237,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.ui.extensions_python_checkbox.setChecked("py" in self.current_settings["extensions"])
         other_types = []
         for ext in self.current_settings["extensions"]:
-            if ext not in ["c", "cpp", "cc", "h", "hpp", "py"]:
+            if ext not in ["c", "cpp", "cc", "h", "hpp", "py", "*"]:
                 other_types.append(ext)
         if len(other_types):
             self.ui.extensions_other_checkbox.setChecked(True)
@@ -328,6 +328,8 @@ class Editor(QMainWindow): # класс, генерирующий основно
         exts = re.sub('[ *.]', '', self.ui.extensions_other_edit.text()).split(',')
         self.EditExt(exts, enable)
     def EditExt(self, exts, enable=True):
+        if "*" in self.current_settings["extensions"]:
+            self.current_settings["extensions"].remove("*")
         for ext in exts:
             if enable:
                 if ext not in self.current_settings["extensions"]:
