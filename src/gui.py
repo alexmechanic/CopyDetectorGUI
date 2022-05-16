@@ -19,6 +19,12 @@ from PyQt5.QtGui import (
     QIcon, QStandardItemModel, QStandardItem
 )
 
+# handle high resolution displays
+if hasattr(Qt, 'AA_EnableHighDpiScaling'):
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+if hasattr(Qt, 'AA_UseHighDpiPixmaps'):
+    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
+
 def _repr_interactive(text: str):
     copy_start = 0
     _str = ""
