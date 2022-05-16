@@ -1,3 +1,4 @@
 *.pyc
 resource.py
 mainform.py
+exe/**
