@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>750</width>
-    <height>657</height>
+    <width>664</width>
+    <height>516</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -42,11 +42,17 @@
     </size>
    </property>
    <layout class="QGridLayout" name="gridLayout_5">
+    <property name="topMargin">
+     <number>20</number>
+    </property>
+    <property name="verticalSpacing">
+     <number>-1</number>
+    </property>
     <item row="0" column="0" rowspan="3">
      <widget class="QGroupBox" name="dirs_groupBox">
       <property name="font">
        <font>
-        <pointsize>14</pointsize>
+        <pointsize>12</pointsize>
         <weight>50</weight>
         <bold>false</bold>
         <kerning>false</kerning>
@@ -232,7 +238,7 @@
      <widget class="QGroupBox" name="additional_groupBox">
       <property name="font">
        <font>
-        <pointsize>14</pointsize>
+        <pointsize>12</pointsize>
        </font>
       </property>
       <property name="title">
@@ -348,7 +354,7 @@
      <widget class="QGroupBox" name="thresholds_groupBox">
       <property name="font">
        <font>
-        <pointsize>14</pointsize>
+        <pointsize>12</pointsize>
        </font>
       </property>
       <property name="title">
@@ -491,7 +497,7 @@
      <widget class="QGroupBox" name="extensions_groupBox">
       <property name="font">
        <font>
-        <pointsize>14</pointsize>
+        <pointsize>12</pointsize>
        </font>
       </property>
       <property name="title">
@@ -582,7 +588,7 @@
      <widget class="QLabel" name="output_location_label">
       <property name="font">
        <font>
-        <pointsize>14</pointsize>
+        <pointsize>12</pointsize>
        </font>
       </property>
       <property name="text">
@@ -597,7 +603,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>750</width>
+     <width>664</width>
      <height>24</height>
     </rect>
    </property>
