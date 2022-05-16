@@ -8,7 +8,7 @@ import sys, os, json, platform, webbrowser, copy, re, subprocess, pathlib
 
 import resource
 from io import StringIO
-from copydetect import CopyDetector
+from copydetect import *
 from mainform import Ui_MainWindow
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
@@ -470,12 +470,12 @@ class Editor(QMainWindow): # класс, генерирующий основно
 
     def About(self):
         QMessageBox.information(self, "CopyDetect UI app", \
-            "Graphical interface for CopyDetect CLI\nTool author: blingenf\n<https://github.com/blingenf>\n\nGUI author:\nAlexander Gerasimov @ MIPT \n<samik.mechanic@gmail.com>")
+            "Graphical interface for CopyDetect CLI\nTool author:\nBryson Lingenfelter @ Nevada Cyber Club\n<blingenfelter@nevada.unr.edu>\n\nGUI author:\nAlexander Gerasimov @ MIPT \n<samik.mechanic@gmail.com>")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon(":/icons/run"))
     ex = Editor()
     ex.show()
-    # вывод окна на передний план
     ex.raise_()
     sys.exit(app.exec())
