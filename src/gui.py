@@ -108,6 +108,18 @@ class Editor(QMainWindow): # класс, генерирующий основно
         # run button
         self.ui.run_button.clicked.connect(self.Run)
 
+    def _apply_workarounds(self):
+        # update 'other' extensions value to settings dict
+        self.EditExt_other()
+        # if no extensions been selected - set all formats
+        if not len(self.current_settings["extensions"]):
+            self.current_settings["extensions"] = ["*"]
+        # Copydetect -c run requires that reference_directories list should not be empty.
+        # If it is so - get reference_directories list equal to test_directories list
+        if not len(self.current_settings["reference_directories"]):
+            self.current_settings["reference_directories"] = copy.deepcopy(self.current_settings["test_directories"])
+            self.UpdateUI()
+
     def LoadConfigFile(self):
         if os.path.isfile(self.SettingsFileName):
             with open(self.SettingsFileName, "r") as settings_file:
@@ -139,17 +151,8 @@ class Editor(QMainWindow): # класс, генерирующий основно
             return self.SaveConfigFileAs()
         else:
             with open(self.SettingsFileName, "w") as settings_file:
-                # update 'other' extensions value to settings dict
-                self.EditExt_other()
-                # Copydetect -c run requires that reference_directories list should not be empty.
-                # If it is so - get reference_directories list equal to test_directories list
-                if not len(self.current_settings["reference_directories"]):
-                    self.current_settings["reference_directories"] = copy.deepcopy(self.current_settings["test_directories"])
-                    self.UpdateUI()
-                # back-workaround for 'display_threshold' value
-                settings = copy.deepcopy(self.current_settings)
-                settings["display_threshold"] = float(settings["display_threshold"]/100)
-                json.dump(settings, settings_file, indent=2, ensure_ascii=False, separators=(",", ": "))
+                self._apply_workarounds()
+                json.dump(self.current_settings, settings_file, indent=2, ensure_ascii=False, separators=(",", ": "))
             self.saved_settings = copy.deepcopy(self.current_settings)
             self.CheckForSettingsChange()
         return True
@@ -163,17 +166,8 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.last_selected_dir = file
         self.SettingsFileName = file
         with open(self.SettingsFileName, "w") as settings_file:
-            # update 'other' extensions value to settings dict
-            self.EditExt_other()
-            # Copydetect -c run requires that reference_directories list should not be empty.
-            # If it is so - get reference_directories list equal to test_directories list
-            if not len(self.current_settings["reference_directories"]):
-                self.current_settings["reference_directories"] = copy.deepcopy(self.current_settings["test_directories"])
-                self.UpdateUI()
-            # back-workaround for 'display_threshold' value
-            settings = copy.deepcopy(self.current_settings)
-            settings["display_threshold"] = float(settings["display_threshold"]/100)
-            json.dump(settings, settings_file, indent=2, ensure_ascii=False, separators=(",", ": "))
+            self._apply_workarounds()
+            json.dump(self.current_settings, settings_file, indent=2, ensure_ascii=False, separators=(",", ": "))
         self.saved_settings = copy.deepcopy(self.current_settings)
         self.setWindowTitle("CopyDetect UI - " + self.SettingsFileName)
         self.CheckForSettingsChange()
@@ -379,11 +373,9 @@ class Editor(QMainWindow): # класс, генерирующий основно
         QApplication.setOverrideCursor(Qt.WaitCursor)
         QApplication.processEvents()
         try:
+            self._apply_workarounds()
         self.setEnabled(False)
-            # back-workaround for 'display_threshold' value
-            settings = copy.deepcopy(self.current_settings)
-            settings["display_threshold"] = float(settings["display_threshold"]/100)
-            detector = CopyDetector(config=settings)
+            detector = CopyDetector(config=self.current_settings)
             # redirect print from stdout to variable
             stdout, stderr = sys.stdout, sys.stderr
             sys.stdout = StringIO()
