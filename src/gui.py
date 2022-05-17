@@ -470,7 +470,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
 
     def About(self):
         QMessageBox.information(self, "CopyDetect UI app", \
-            "Graphical interface for CopyDetect CLI\nTool author:\nBryson Lingenfelter @ Nevada Cyber Club\n<blingenfelter@nevada.unr.edu>\n\nGUI author:\nAlexander Gerasimov @ MIPT \n<samik.mechanic@gmail.com>")
+            "Graphical interface for CopyDetect CLI\n\nTool author:\nBryson Lingenfelter @ Nevada Cyber Club\n<blingenfelter@nevada.unr.edu>\n\nGUI author:\nAlexander Gerasimov @ MIPT \n<samik.mechanic@gmail.com>")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
