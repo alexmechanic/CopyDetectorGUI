@@ -15,6 +15,7 @@ CopyDetectorGUI requires no classic installation process. To install it, check t
 To **run the app** from source code:
 - Clone the repository
 - Install required dependencies by runnning `python -m pip install -r requirements.txt`
+- Execute `./ui2py.sh` to generate form and resource files
 - Execute `./src/gui.py` to launch the app
 
 **Note:** Python version 3.6 or greater is required. Older versions might be supported but have not been tested against.
