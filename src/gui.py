@@ -57,7 +57,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
             "extensions" : [],
             "noise_threshold" : 25,
             "guarantee_threshold" : 30,
-            "display_threshold" : 33,
+            "display_threshold" : .33,
             "same_name_only" : False,
             "ignore_leaf" : False,
             "disable_filtering" : False,
