@@ -28,6 +28,7 @@ if __name__ == '__main__':
         '--windowed',
         '--distpath=' + outdir,
         '--collect-data', 'copydetect',
+        '--add-data', '../README.md' + os.pathsep + '.',
         '--clean',
         '--noconfirm',
         '--log-level=CRITICAL',
