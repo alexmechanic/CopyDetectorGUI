@@ -464,9 +464,9 @@ class Editor(QMainWindow): # класс, генерирующий основно
     def OpenHelp(self):
         if platform.system() == 'Darwin':
             client = webbrowser.get('safari')
-            client.open_new_tab(os.getcwd() + "/README.md")
+            client.open_new_tab("https://github.com/alexmechanic/CopyDetectorGUI/blob/master/README.md")
         else:
-            webbrowser.open_new_tab(os.getcwd() + "/README.md")
+            webbrowser.open_new_tab("https://github.com/alexmechanic/CopyDetectorGUI/blob/master/README.md")
 
     def About(self):
         QMessageBox.information(self, "CopyDetect UI app", \
