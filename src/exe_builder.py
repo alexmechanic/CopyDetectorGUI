@@ -9,8 +9,15 @@
 import PyInstaller.__main__, sys, os
 from distutils.dir_util import remove_tree
 
-# имя файла программы
 NAME = u'CopyDetectorGUI'
+
+outdir = '../exe'
+if sys.platform == "win32":
+    outdir += "/win32"
+elif sys.platform == "linux":
+    outdir += "/linux"
+elif sys.platform == "darwin":
+    outdir += "/macos"
 
 if __name__ == '__main__':
     print ("Building executable...", end='')
@@ -19,7 +26,7 @@ if __name__ == '__main__':
         '--name=%s' % NAME,
         # '--onefile',
         '--windowed',
-        '--distpath=../exe',
+        '--distpath=' + outdir,
         '--collect-data', 'copydetect',
         '--clean',
         '--noconfirm',
