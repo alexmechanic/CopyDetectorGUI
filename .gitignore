@@ -1,4 +1,7 @@
 *.pyc
 resource.py
 mainform.py
+# build files
 exe/**
+src/build/**
+*.spec
