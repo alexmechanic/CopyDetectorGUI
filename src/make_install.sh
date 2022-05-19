@@ -17,5 +17,5 @@ python3 exe_builder.py  &> /dev/null
 echo "done."
 echo -n "Cleaning up..."
 deactivate
-# rm -rf build_env
+rm -rf build_env
 echo "done."
