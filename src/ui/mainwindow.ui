@@ -299,6 +299,9 @@
            <height>16777215</height>
           </size>
          </property>
+         <property name="whatsThis">
+          <string>noise_threshold</string>
+         </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
@@ -340,6 +343,9 @@
            <height>16777215</height>
           </size>
          </property>
+         <property name="whatsThis">
+          <string>guarantee_threshold</string>
+         </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
@@ -380,6 +386,9 @@
            <width>80</width>
            <height>16777215</height>
           </size>
+         </property>
+         <property name="whatsThis">
+          <string>display_threshold</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -560,6 +569,9 @@
       <layout class="QGridLayout" name="gridLayout_4">
        <item row="0" column="0">
         <widget class="QCheckBox" name="additional_samename_checkbox">
+         <property name="whatsThis">
+          <string>same_name_only</string>
+         </property>
          <property name="text">
           <string>Only compare files with the same name</string>
          </property>
@@ -567,6 +579,9 @@
        </item>
        <item row="1" column="0">
         <widget class="QCheckBox" name="additional_sameleaf_checkbox">
+         <property name="whatsThis">
+          <string>ignore_leaf</string>
+         </property>
          <property name="text">
           <string>Do not compare files in the same leaf directory</string>
          </property>
@@ -577,6 +592,9 @@
          <property name="toolTip">
           <string>Disable code tokenization and filtering</string>
          </property>
+         <property name="whatsThis">
+          <string>disable_filtering</string>
+         </property>
          <property name="text">
           <string>Disable filtering</string>
          </property>
@@ -584,6 +602,9 @@
        </item>
        <item row="3" column="0">
         <widget class="QCheckBox" name="additional_autoopen_checkbox">
+         <property name="whatsThis">
+          <string>disable_autoopen</string>
+         </property>
          <property name="text">
           <string>Disable auto-opening report in browser</string>
          </property>
@@ -591,6 +612,9 @@
        </item>
        <item row="4" column="0">
         <widget class="QCheckBox" name="additional_truncate_checkbox">
+         <property name="whatsThis">
+          <string>truncate</string>
+         </property>
          <property name="text">
           <string>Truncate non-highlighted regions from the output</string>
          </property>
