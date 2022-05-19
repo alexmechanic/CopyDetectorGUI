@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>664</width>
-    <height>516</height>
+    <width>873</width>
+    <height>588</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="maximumSize">
    <size>
@@ -23,12 +29,6 @@
    <locale language="English" country="UnitedStates"/>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
    <property name="minimumSize">
     <size>
      <width>460</width>
@@ -37,8 +37,8 @@
    </property>
    <property name="maximumSize">
     <size>
-     <width>920</width>
-     <height>600</height>
+     <width>16777215</width>
+     <height>16777215</height>
     </size>
    </property>
    <layout class="QGridLayout" name="gridLayout_5">
@@ -50,6 +50,12 @@
     </property>
     <item row="0" column="0" rowspan="3">
      <widget class="QGroupBox" name="dirs_groupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <pointsize>12</pointsize>
@@ -234,122 +240,6 @@
       </layout>
      </widget>
     </item>
-    <item row="2" column="1" colspan="3">
-     <widget class="QGroupBox" name="additional_groupBox">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
-      <property name="title">
-       <string>Additional options</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="additional_samename_checkbox">
-         <property name="text">
-          <string>Only compare files with the same name</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="additional_sameleaf_checkbox">
-         <property name="text">
-          <string>Do not compare files in the same leaf directory</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="additional_filtering_checkbox">
-         <property name="toolTip">
-          <string>Disable code tokenization and filtering</string>
-         </property>
-         <property name="text">
-          <string>Disable filtering</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QCheckBox" name="additional_autoopen_checkbox">
-         <property name="text">
-          <string>Disable auto-opening report in browser</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QCheckBox" name="additional_truncate_checkbox">
-         <property name="text">
-          <string>Truncate non-highlighted regions from the output</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="4" column="3">
-     <widget class="QPushButton" name="output_location_select_button">
-      <property name="maximumSize">
-       <size>
-        <width>100</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Select</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="0">
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Expanding</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="5" column="1">
-     <widget class="QPushButton" name="run_button">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="text">
-       <string>Analyze</string>
-      </property>
-      <property name="autoDefault">
-       <bool>true</bool>
-      </property>
-      <property name="default">
-       <bool>true</bool>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="2" colspan="2">
-     <spacer name="horizontalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Expanding</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
     <item row="1" column="1" colspan="3">
      <widget class="QGroupBox" name="thresholds_groupBox">
       <property name="font">
@@ -493,6 +383,9 @@
       </layout>
      </widget>
     </item>
+    <item row="4" column="0" colspan="3">
+     <widget class="QLineEdit" name="output_location_edit"/>
+    </item>
     <item row="0" column="1" colspan="3">
      <widget class="QGroupBox" name="extensions_groupBox">
       <property name="font">
@@ -581,9 +474,6 @@
       </layout>
      </widget>
     </item>
-    <item row="4" column="0" colspan="3">
-     <widget class="QLineEdit" name="output_location_edit"/>
-    </item>
     <item row="3" column="0" colspan="4">
      <widget class="QLabel" name="output_location_label">
       <property name="font">
@@ -596,6 +486,108 @@
       </property>
      </widget>
     </item>
+    <item row="5" column="0" colspan="4">
+     <widget class="QPushButton" name="run_button">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Analyze</string>
+      </property>
+      <property name="autoDefault">
+       <bool>true</bool>
+      </property>
+      <property name="default">
+       <bool>false</bool>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1" colspan="3">
+     <widget class="QGroupBox" name="additional_groupBox">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>Additional options</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="additional_samename_checkbox">
+         <property name="text">
+          <string>Only compare files with the same name</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="additional_sameleaf_checkbox">
+         <property name="text">
+          <string>Do not compare files in the same leaf directory</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="additional_filtering_checkbox">
+         <property name="toolTip">
+          <string>Disable code tokenization and filtering</string>
+         </property>
+         <property name="text">
+          <string>Disable filtering</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="additional_autoopen_checkbox">
+         <property name="text">
+          <string>Disable auto-opening report in browser</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QCheckBox" name="additional_truncate_checkbox">
+         <property name="text">
+          <string>Truncate non-highlighted regions from the output</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="4" column="3">
+     <widget class="QPushButton" name="output_location_select_button">
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Select</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -603,7 +595,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>664</width>
+     <width>873</width>
      <height>24</height>
     </rect>
    </property>
