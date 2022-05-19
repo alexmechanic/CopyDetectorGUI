@@ -13,10 +13,12 @@ from mainform import Ui_MainWindow
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow,
-    QFileDialog, QMessageBox
+    QFileDialog, QMessageBox,
+    QShortcut
 )
 from PyQt5.QtGui import (
-    QIcon, QStandardItemModel, QStandardItem
+    QIcon, QStandardItemModel, QStandardItem,
+    QKeySequence
 )
 
 # handle high resolution displays
@@ -80,6 +82,8 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.ui.test_dirs_button_add.clicked.connect(self.AddDir_test)
         self.ui.ref_dirs_button_add.clicked.connect(self.AddDir_ref)
         self.ui.bp_dirs_button_add.clicked.connect(self.AddDir_bp)
+        # global shortcut for quick deletion of directory from focused list
+        QShortcut(QKeySequence("Backspace"), self, self.DelDir_fromshortcut)
         self.ui.test_dirs_button_remove.clicked.connect(self.DelDir_test)
         self.ui.ref_dirs_button_remove.clicked.connect(self.DelDir_ref)
         self.ui.bp_dirs_button_remove.clicked.connect(self.DelDir_bp)
@@ -284,8 +288,8 @@ class Editor(QMainWindow): # класс, генерирующий основно
 
     def CheckForSettingsChange(self):
         # set unsaved state for window title
-        print(self.saved_settings)
-        print(self.current_settings)
+        # print(self.saved_settings)
+        # print(self.current_settings)
         if self.current_settings != self.saved_settings:
             if self.windowTitle()[-1] != '*':
                 self.setWindowTitle(self.windowTitle() + '*')
@@ -312,6 +316,19 @@ class Editor(QMainWindow): # класс, генерирующий основно
             self.current_settings[type].append(dir)
         self.UpdateUI()
 
+    # remove button connection from global window shortcut 
+    def DelDir_fromshortcut(self):
+        focused = self.focusWidget()
+        print(focused)
+        print(self.ui.test_dirs_list)
+        if focused == self.ui.test_dirs_list:
+            self.DelDir_test()
+        elif focused == self.ui.ref_dirs_list:
+            self.DelDir_ref()
+        elif focused == self.ui.bp_dirs_list:
+            self.DelDir_bp()
+        else:
+            pass
     # remove button connection redirection funcs
     def DelDir_test(self):
         self.DelDir("test_directories")
@@ -321,15 +338,19 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.DelDir("boilerplate_directories")
     # main one
     def DelDir(self, type):
+        idx = None
         if type == "test_directories":
-            to_del = self.ui.test_dirs_list.currentIndex().data(Qt.DisplayRole)
+            idx = self.ui.test_dirs_list.currentIndex()
+            to_del = idx.data(Qt.DisplayRole)
         elif type == "reference_directories":
-            to_del = self.ui.ref_dirs_list.currentIndex().data(Qt.DisplayRole)
+            idx = self.ui.ref_dirs_list.currentIndex()
+            to_del = idx.data(Qt.DisplayRole)
         else: # bp dir
-            to_del = self.ui.bp_dirs_list.currentIndex().data(Qt.DisplayRole)
+            idx = self.ui.bp_dirs_list.currentIndex()
+            to_del = idx.data(Qt.DisplayRole)
         if to_del is not None:
             self.current_settings[type].remove(to_del)
-        self.UpdateUI()
+            self.UpdateUI()
 
     def EditExt_c(self):
         self.EditExt(["cpp", "cc", "c"], self.ui.extensions_c_source_checkbox.isChecked())
