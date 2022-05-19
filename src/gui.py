@@ -14,7 +14,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow,
     QFileDialog, QMessageBox,
-    QShortcut, QAction
+    QSpinBox, QCheckBox, QPushButton,
+    QShortcut, QAction,
 )
 from PyQt5.QtGui import (
     QIcon, QStandardItemModel, QStandardItem,
@@ -87,30 +88,29 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.ui.actionHelp_Help.triggered.connect(self.OpenHelp)
         self.ui.actionHelp_About.triggered.connect(self.About)
         # add/remove from list buttons
-        self.ui.test_dirs_button_add.clicked.connect(self.AddDir_test)
-        self.ui.ref_dirs_button_add.clicked.connect(self.AddDir_ref)
-        self.ui.bp_dirs_button_add.clicked.connect(self.AddDir_bp)
+        self.ui.test_dirs_button_add.clicked.connect(self.AddDir)
+        self.ui.ref_dirs_button_add.clicked.connect(self.AddDir)
+        self.ui.bp_dirs_button_add.clicked.connect(self.AddDir)
         # global shortcut for quick deletion of directory from focused list
         QShortcut(QKeySequence("Backspace"), self, self.DelDir_fromshortcut)
         self.ui.test_dirs_button_remove.clicked.connect(self.DelDir_test)
         self.ui.ref_dirs_button_remove.clicked.connect(self.DelDir_ref)
         self.ui.bp_dirs_button_remove.clicked.connect(self.DelDir_bp)
         # extensions checkboxes
-        self.ui.extensions_c_source_checkbox.stateChanged.connect(self.EditExt_c)
-        self.ui.extensions_c_header_checkbox.stateChanged.connect(self.EditExt_h)
-        self.ui.extensions_python_checkbox.stateChanged.connect(self.EditExt_py)
+        self.ui.extensions_c_source_checkbox.stateChanged.connect(self.EditExt_common)
+        self.ui.extensions_c_header_checkbox.stateChanged.connect(self.EditExt_common)
+        self.ui.extensions_python_checkbox.stateChanged.connect(self.EditExt_common)
         self.ui.extensions_other_checkbox.stateChanged.connect(self.EditExt_other_enable)
-        # self.ui.extensions_other_edit.textChanged.connect(self.EditExt_other)
         # thresholds spinboxes
-        self.ui.thresholds_noise_spinbox.valueChanged.connect(self.EditThres_noise)
-        self.ui.thresholds_guarantee_spinbox.valueChanged.connect(self.EditThres_guar)
-        self.ui.thresholds_display_spinbox.valueChanged.connect(self.EditThres_disp)
+        self.ui.thresholds_noise_spinbox.valueChanged.connect(self.EditThres)
+        self.ui.thresholds_guarantee_spinbox.valueChanged.connect(self.EditThres)
+        self.ui.thresholds_display_spinbox.valueChanged.connect(self.EditThres)
         # additional checkboxes
-        self.ui.additional_samename_checkbox.stateChanged.connect(self.EditAdd_samename)
-        self.ui.additional_sameleaf_checkbox.stateChanged.connect(self.EditAdd_leaf)
-        self.ui.additional_filtering_checkbox.stateChanged.connect(self.EditAdd_filt)
-        self.ui.additional_autoopen_checkbox.stateChanged.connect(self.EditAdd_autoopen)
-        self.ui.additional_truncate_checkbox.stateChanged.connect(self.EditAdd_truncate)
+        self.ui.additional_samename_checkbox.stateChanged.connect(self.EditAdd)
+        self.ui.additional_sameleaf_checkbox.stateChanged.connect(self.EditAdd)
+        self.ui.additional_filtering_checkbox.stateChanged.connect(self.EditAdd)
+        self.ui.additional_autoopen_checkbox.stateChanged.connect(self.EditAdd)
+        self.ui.additional_truncate_checkbox.stateChanged.connect(self.EditAdd)
         # out file selection button
         self.ui.output_location_select_button.clicked.connect(self.SelectOutFile)
         # out file full path edit change
@@ -164,12 +164,11 @@ class Editor(QMainWindow): # класс, генерирующий основно
                 pass
 
     def LoadRecentConfigFile(self):
-        if type(self.sender()) == QAction:
-            self.SettingsFileName = self.sender().text()
-            self.LoadConfigFile()
-            self.UpdateUI()
-        else:
-            pass # illegal sender
+        if type(self.sender()) != QAction:
+            return # illegal sender
+        self.SettingsFileName = self.sender().text()
+        self.LoadConfigFile()
+        self.UpdateUI()
 
     def LoadConfigFile(self):
         if os.path.isfile(self.SettingsFileName):
@@ -311,7 +310,6 @@ class Editor(QMainWindow): # класс, генерирующий основно
         if len(other_types):
             self.ui.extensions_other_checkbox.setChecked(True)
             self.ui.extensions_other_edit.setText(",  ".join(ex for ex in other_types))
-            self.ui.extensions_other_edit.setEnabled(True)
         self.ui.thresholds_noise_spinbox.setValue(self.current_settings["noise_threshold"])
         self.ui.thresholds_guarantee_spinbox.setValue(self.current_settings["guarantee_threshold"])
         self.ui.thresholds_display_spinbox.setValue(int(self.current_settings["display_threshold"]*100))
@@ -338,21 +336,17 @@ class Editor(QMainWindow): # класс, генерирующий основно
                 self.setWindowTitle(self.windowTitle()[:-1])
             return False
 
-    # add button connection redirection funcs
-    def AddDir_test(self):
-        self.AddDir("test_directories")
-    def AddDir_ref(self):
-        self.AddDir("reference_directories")
-    def AddDir_bp(self):
-        self.AddDir("boilerplate_directories")
-    # main one
-    def AddDir(self, type):
+    def AddDir(self):
+        if type(self.sender()) != QPushButton:
+            return # illegal sender
+        # getting config var name via whatsThis (format ACTION-DIR_TYPE)
+        dirtype = self.sender().whatsThis().split('-')[1]
         dir = QFileDialog.getExistingDirectory(self, "Directory select", self.last_selected_dir)
         if dir == "":
             return
         self.last_selected_dir = dir
-        if dir not in self.current_settings[type]:
-            self.current_settings[type].append(dir)
+        if dir not in self.current_settings[dirtype]:
+            self.current_settings[dirtype].append(dir)
         self.UpdateUI()
 
     # remove button connection from global window shortcut 
@@ -391,12 +385,19 @@ class Editor(QMainWindow): # класс, генерирующий основно
             self.current_settings[type].remove(to_del)
             self.UpdateUI()
 
-    def EditExt_c(self):
-        self.EditExt(["cpp", "cc", "c"], self.ui.extensions_c_source_checkbox.isChecked())
-    def EditExt_h(self):
-        self.EditExt(["hpp", "h"], self.ui.extensions_c_header_checkbox.isChecked())
-    def EditExt_py(self):
-        self.EditExt(["py"], self.ui.extensions_python_checkbox.isChecked())
+    def EditExt_common(self):
+        if type(self.sender()) != QCheckBox:
+            return # illegal sender
+        exts = []
+        if self.sender() == self.ui.extensions_c_source_checkbox:
+            exts = ["cpp", "cc", "c"]
+        elif self.sender() == self.ui.extensions_c_header_checkbox:
+            exts = ["hpp", "h"]
+        elif self.sender() == self.ui.extensions_python_checkbox:
+            exts = ["py"]
+        else:
+            return # unknown sender
+        self.EditExt(exts, self.sender().isChecked())
     def EditExt_other_enable(self):
         enable = self.ui.extensions_other_checkbox.isChecked()
         self.ui.extensions_other_edit.setEnabled(enable)
@@ -406,7 +407,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
             self.UpdateUI()
         self.EditExt_other()
         self.UpdateUI()
-    # TODO: dont forget to check for text changed on close and before Analyze run!!!
+    # TODO: dont forget to check for text changed on close and before Analyze run!
     #  I cannot apply changes every time the single char changed here!
     #  Just call EditExt_other(), it does all the needed work
     def EditExt_other(self):
@@ -417,6 +418,8 @@ class Editor(QMainWindow): # класс, генерирующий основно
         if "*" in self.current_settings["extensions"]:
             self.current_settings["extensions"].remove("*")
         for ext in exts:
+            if ext == '':
+                continue
             if enable:
                 if ext not in self.current_settings["extensions"]:
                     self.current_settings["extensions"].append(ext)
@@ -424,37 +427,25 @@ class Editor(QMainWindow): # класс, генерирующий основно
                 if ext in self.current_settings["extensions"]:
                     self.current_settings["extensions"].remove(ext)
         self.UpdateUI()
-    
-    def EditThres_noise(self):
-        self.EditThres("noise_threshold")
-    def EditThres_guar(self):
-        self.EditThres("guarantee_threshold")
-    def EditThres_disp(self):
-        self.EditThres("display_threshold")
-    def EditThres(self, type):
-        if type == "noise_threshold":
-            val = self.ui.thresholds_noise_spinbox.value()
-        elif type == "guarantee_threshold":
-            val = self.ui.thresholds_guarantee_spinbox.value()
-        else:
-            val = float(self.ui.thresholds_display_spinbox.value())/100
-        self.current_settings[type] = val
-        self.UpdateUI()
 
-    def EditAdd_samename(self):
-        self.current_settings["same_name_only"] = self.ui.additional_samename_checkbox.isChecked()
+    def EditThres(self):
+        if type(self.sender()) != QSpinBox:
+            return # illegal sender
+        # getting config var name via whatsThis
+        setting_name = self.sender().whatsThis()
+        # special case for float-valued display_threshold
+        if self.sender() == self.ui.thresholds_display_spinbox:
+            self.current_settings[setting_name] = float(self.sender().value())/100
+        else:
+            self.current_settings[setting_name] = self.sender().value()
         self.UpdateUI()
-    def EditAdd_leaf(self):
-        self.current_settings["ignore_leaf"] = self.ui.additional_sameleaf_checkbox.isChecked()
-        self.UpdateUI()
-    def EditAdd_filt(self):
-        self.current_settings["disable_filtering"] = self.ui.additional_filtering_checkbox.isChecked()
-        self.UpdateUI()
-    def EditAdd_autoopen(self):
-        self.current_settings["disable_autoopen"] = self.ui.additional_autoopen_checkbox.isChecked()
-        self.UpdateUI()
-    def EditAdd_truncate(self):
-        self.current_settings["truncate"] = self.ui.additional_truncate_checkbox.isChecked()
+    
+    def EditAdd(self):
+        if type(self.sender()) != QCheckBox:
+            return # illegal sender
+        # getting config var name via whatsThis
+        setting_name = self.sender().whatsThis()
+        self.current_settings[setting_name] = self.sender().isChecked()
         self.UpdateUI()
 
     def Run(self):
