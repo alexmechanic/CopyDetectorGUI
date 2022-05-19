@@ -144,6 +144,17 @@ class Editor(QMainWindow): # класс, генерирующий основно
             app_settings = json.load(open(settings_path, "r"))
             self.SettingsFileName = app_settings["last_config_file"]
             self.last_selected_dir = app_settings["last_selected_dir"]
+            # backward compatibility with v0.1
+            # saving last window state was added in v0.2
+            try:
+                self.resize(*app_settings["window_size"])
+            except KeyError:
+                pass
+            try:
+                self.move(*app_settings["window_pos"])
+            except KeyError:
+                pass
+
 
     def LoadConfigFile(self):
         if os.path.isfile(self.SettingsFileName):
@@ -169,7 +180,9 @@ class Editor(QMainWindow): # класс, генерирующий основно
         settings_path = self._get_app_path()
         app_settings = {
             "last_config_file": self.SettingsFileName,
-            "last_selected_dir": self.last_selected_dir
+            "last_selected_dir": self.last_selected_dir,
+            "window_size": [ self.width(), self.height() ],
+            "window_pos": [ self.pos().x(), self.pos().y() ]
         }
         json.dump(app_settings, open(settings_path, "w"), \
                   indent=2, ensure_ascii=False, separators=(",", ": "))
