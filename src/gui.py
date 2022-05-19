@@ -217,8 +217,6 @@ class Editor(QMainWindow): # класс, генерирующий основно
         return True
 
     def SaveConfigFileAs(self):
-        if not self.CheckForSettingsChange():
-            return False
         file, _ = QFileDialog.getSaveFileName(self, "Save new configuration", self.last_selected_dir, "CopyDetect settings (*.json)")
         if file == "":
             return False
