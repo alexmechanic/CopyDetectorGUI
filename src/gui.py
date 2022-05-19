@@ -14,7 +14,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow,
     QFileDialog, QMessageBox,
-    QShortcut
+    QShortcut, QAction
 )
 from PyQt5.QtGui import (
     QIcon, QStandardItemModel, QStandardItem,
@@ -69,6 +69,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
         }
         self.current_settings = copy.deepcopy(self.saved_settings)
         self.LoadAppSettings()
+        self.recent_configs = set()
         self.LoadConfigFile()
         self.ui.run_button.setIcon(QIcon(":/icons/run"))
         self.UpdateUI()
@@ -155,6 +156,13 @@ class Editor(QMainWindow): # класс, генерирующий основно
             except KeyError:
                 pass
 
+    def LoadRecentConfigFile(self):
+        if type(self.sender()) == QAction:
+            self.SettingsFileName = self.sender().text()
+            self.LoadConfigFile()
+            self.UpdateUI()
+        else:
+            pass # illegal sender
 
     def LoadConfigFile(self):
         if os.path.isfile(self.SettingsFileName):
@@ -164,6 +172,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
             # refresh change state
             self.saved_settings = copy.deepcopy(self.current_settings)
             self.setWindowTitle("CopyDetect UI - " + self.SettingsFileName)
+            self.recent_configs.add(self.SettingsFileName)
 
     def OpenConfigFile(self):
         if self.SettingsFileName != "" or os.path.isfile(self.SettingsFileName):
@@ -231,6 +240,17 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.CheckForSettingsChange()
 
     def UpdateUI(self):
+        # refill recent files menubar
+        recents = []
+        for action in self.ui.menuOpen_Recent.actions():
+            self.ui.menuOpen_Recent.removeAction(action)
+        for file in self.recent_configs:
+            baritem = QAction(file, self.ui.menuOpen_Recent)
+            baritem.setEnabled(file != self.SettingsFileName)
+            baritem.triggered.connect(self.LoadRecentConfigFile)
+            recents.append(baritem)
+        self.ui.menuOpen_Recent.addActions(recents)
+        # fill directory lists
         model = QStandardItemModel(self.ui.test_dirs_list)
         for dir in self.current_settings["test_directories"]:
             item = QStandardItem(QIcon(":/icons/folder"), dir)
