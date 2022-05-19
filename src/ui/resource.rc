@@ -1,7 +1,13 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
     <qresource prefix="icons">
-        <file alias="run">img/run.png</file>
+        <file alias="file">img/file.png</file>
+        <file alias="recent">img/recent.png</file>
         <file alias="folder">img/folder.png</file>
+        <file alias="save">img/save.png</file>
+        <file alias="saveas">img/saveas.png</file>
+        <file alias="run">img/run.png</file>
+        <file alias="help">img/help.png</file>
+        <file alias="about">img/about.png</file>
     </qresource>
 </RCC>

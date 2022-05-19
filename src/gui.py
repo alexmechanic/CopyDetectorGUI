@@ -71,8 +71,15 @@ class Editor(QMainWindow): # класс, генерирующий основно
         self.LoadAppSettings()
         self.recent_configs = set()
         self.LoadConfigFile()
-        self.ui.run_button.setIcon(QIcon(":/icons/run"))
         self.UpdateUI()
+        # set icons
+        self.ui.actionOpen_configuration.setIcon(QIcon(":/icons/folder"))
+        self.ui.menuOpen_Recent.setIcon(QIcon(":/icons/recent"))
+        self.ui.actionSave_configuration.setIcon(QIcon(":/icons/save"))
+        self.ui.actionSave_configuration_as.setIcon(QIcon(":/icons/saveas"))
+        self.ui.actionHelp_Help.setIcon(QIcon(":/icons/help"))
+        self.ui.actionHelp_About.setIcon(QIcon(":/icons/about"))
+        self.ui.run_button.setIcon(QIcon(":/icons/run"))
         # connect menubar actions
         self.ui.actionOpen_configuration.triggered.connect(self.OpenConfigFile)
         self.ui.actionSave_configuration.triggered.connect(self.SaveConfigFile)
@@ -246,6 +253,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
             self.ui.menuOpen_Recent.removeAction(action)
         for file in self.recent_configs:
             baritem = QAction(file, self.ui.menuOpen_Recent)
+            baritem.setIcon(QIcon(":/icons/file"))
             baritem.setEnabled(file != self.SettingsFileName)
             baritem.triggered.connect(self.LoadRecentConfigFile)
             recents.append(baritem)
