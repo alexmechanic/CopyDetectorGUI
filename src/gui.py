@@ -221,6 +221,7 @@ class Editor(QMainWindow): # класс, генерирующий основно
             return False
         self.last_selected_dir = file
         self.SettingsFileName = file
+        self.recent_configs.add(self.SettingsFileName)
         self._apply_workarounds()
         json.dump(self.current_settings, open(self.SettingsFileName, "w"), \
                   indent=2, ensure_ascii=False, separators=(",", ": "))
