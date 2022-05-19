@@ -16,6 +16,12 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>563</width>
+    <height>493</height>
+   </size>
+  </property>
   <property name="maximumSize">
    <size>
     <width>16777215</width>
@@ -242,6 +248,12 @@
     </item>
     <item row="1" column="1" colspan="3">
      <widget class="QGroupBox" name="thresholds_groupBox">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>110</height>
+       </size>
+      </property>
       <property name="font">
        <font>
         <pointsize>12</pointsize>
@@ -388,6 +400,12 @@
     </item>
     <item row="0" column="1" colspan="3">
      <widget class="QGroupBox" name="extensions_groupBox">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>118</height>
+       </size>
+      </property>
       <property name="font">
        <font>
         <pointsize>12</pointsize>
@@ -525,6 +543,12 @@
     </item>
     <item row="2" column="1" colspan="3">
      <widget class="QGroupBox" name="additional_groupBox">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>127</height>
+       </size>
+      </property>
       <property name="font">
        <font>
         <pointsize>12</pointsize>
