@@ -670,6 +670,33 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>run_button</tabstop>
+  <tabstop>output_location_select_button</tabstop>
+  <tabstop>output_location_edit</tabstop>
+  <tabstop>test_dirs_button_add</tabstop>
+  <tabstop>test_dirs_button_remove</tabstop>
+  <tabstop>test_dirs_list</tabstop>
+  <tabstop>ref_dirs_button_add</tabstop>
+  <tabstop>ref_dirs_button_remove</tabstop>
+  <tabstop>ref_dirs_list</tabstop>
+  <tabstop>bp_dirs_button_add</tabstop>
+  <tabstop>bp_dirs_button_remove</tabstop>
+  <tabstop>bp_dirs_list</tabstop>
+  <tabstop>extensions_c_source_checkbox</tabstop>
+  <tabstop>extensions_c_header_checkbox</tabstop>
+  <tabstop>extensions_python_checkbox</tabstop>
+  <tabstop>extensions_other_checkbox</tabstop>
+  <tabstop>extensions_other_edit</tabstop>
+  <tabstop>thresholds_noise_spinbox</tabstop>
+  <tabstop>thresholds_guarantee_spinbox</tabstop>
+  <tabstop>thresholds_display_spinbox</tabstop>
+  <tabstop>additional_samename_checkbox</tabstop>
+  <tabstop>additional_sameleaf_checkbox</tabstop>
+  <tabstop>additional_filtering_checkbox</tabstop>
+  <tabstop>additional_autoopen_checkbox</tabstop>
+  <tabstop>additional_truncate_checkbox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
